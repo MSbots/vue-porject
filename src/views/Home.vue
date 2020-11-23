@@ -1,11 +1,11 @@
-
 <template>
     <div class="hello">
       
       
         <span>
-            <h1>欢迎使用员工管理系统</h1>
+            <h1>Welcome! {{ user.userName }}</h1>
         </span>
+        
         
         <el-container style="height: 500px; border: 1px solid #eee">
   <!-- <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
@@ -68,12 +68,12 @@
           <el-dropdown-item>删除</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <span>王小虎</span>
+       <el-link type="success" @click="loginout()">退出</el-link>
     </el-header>
     
     <el-main>
-      <el-table :data="tableData" border="true" resizable="true" >
-        <el-table-column prop="empId" label="ID" width="140">
+      <el-table :data="tableData" :border="true" resizable="true" >
+        <el-table-column prop="id" label="ID" width="140">
         </el-table-column>
         <el-table-column prop="name" label="名字" width="80">
         </el-table-column>
@@ -105,9 +105,7 @@
 <el-dialog title="添加员工" :visible.sync="dialogVisible" width="50%">
   <span>
     <el-form ref="form" :model="form" label-width="100px">
-      <el-form-item label="ID:">
-        <el-input v-model="form.empId"></el-input>
-      </el-form-item>
+     
       <el-form-item label="名称:">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
@@ -124,40 +122,39 @@
     </el-form>    
   </span>
 </el-dialog>
+
     </div>
 </template>
 
 <!----------------------------------script------------------------------------------------ -->
 <script>
-
+ const axios = require('axios');
   export default {
-    components : {
-      
-    },
-    data() {
-
-      const item = {
-        empId: '001',
-        name: '王小虎',
-        salary: '8000',
-        age: '25'
-      };
-      return {
-        // http: Httpservice.getAxios,
+    data() {  
+   
+      return {     
+        user: {
+          realName: ""
+        },     
         dialogVisible: false, //控制对话框的显示和隐藏
         dialog: false,
         // ---表格数据
-        tableData: Array(4).fill(item),
+        tableData:[],
         // 对话框表单数据
         form: {
-          empId: "",
           name: "",
           salary: "",
           age: ""
         }
       }
     },
-     methods: {
+    methods: {
+      //退出
+      loginout(){
+        localStorage.removeItem("user");
+        location.reload(true);
+      },
+
        handleCommand(command) {
       this.$message("click on item " + command);
       if (command == "a") {
@@ -166,17 +163,41 @@
     },
     // 将表单数据添加到表格中去
     onSubmit() {
-      //console.log(this.table)
-      this.tableData.push(this.form);
+      axios({
+        method:"post",
+        url:"http://localhost:8090/employee/insert",
+        data:this.form,
+      }).then(res =>{
+        console.log(res.data)
+      })
       this.dialogVisible = false;
     },
     
        // --删除信息
       deleteRow(index, rows) {
         rows.splice(index, 1);
-      }
+      },
+     
     },
+    created() {
+     var userString =localStorage.getItem("user");
+     if(userString){
+        this.user=JSON.parse(userString);
+        console.log(this.user);
+     }else{
+           alert("还未登录，请点击登录")
+           location.href="/login/index"
+     } 
+     //列表展示
+     var _this =this;
+     axios.get("http://localhost:8090/employee/findAll").then(res=>{
+       _this.tableData=res.data;
+       console.log(_this.tableData);
+     })
+
+     },
   };
+ 
 </script>
 
 
