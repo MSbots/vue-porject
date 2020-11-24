@@ -3,7 +3,7 @@
     <el-form ref="form" :model="form" label-width="80px" class="login-form">
       <h2 class="login-title">员工管理系统</h2>
       <el-form-item label="用户名:">
-        <el-input v-model="form.username"></el-input>
+        <el-input v-model="form.userName"></el-input>
       </el-form-item>
       <el-form-item label="密码:">
         <el-input v-model="form.password" type="password"></el-input>
@@ -16,20 +16,19 @@
     </el-form>
   </div>
 </template>
-  <script>
-  import axios from 'axios'
+
+<script>
+  const axios = require('axios');
 export default {
-  // components:{
-  //   axios
-  // },
     data() {
       return {
+      
         form: {
-          username: "",
-          password: ""
+          userName: "张三",
+          password: "44444"
         },
         rules: {
-          username: [
+          userName: [
             {required: true, message: "用户名不能为空", trigger: 'blur'},
             {min: 3, max: 10, message: "用户名3-5位", trigger: 'blur'}
           ],
@@ -39,32 +38,30 @@ export default {
           ]
       }
       };
+
+      
     },
     methods: {
       // <!--进入系统-->
-      onSubmit() { //点击按钮，账号密码验证成功则跳转页面，失败提示错误信息
-        axios.put('http://localhost:8090/user/login', {
-        userName: this.form.username,
-       password: this.form.password
-      })
-    .then(function (response) {
-       console.log(response); 
-       if(response.data.msg==100){
-      window.location.href="http://localhost:8080/#/home";
-    }else{
-      alert(response.data.msg)
-    }
-    })
-    .catch(function (error) {
-        console(error);
-    });
-   
-        
-      },
+       onSubmit(){
+                //发送登录请求
+                axios.put("http://localhost:8090/user/login",this.form).then(res=>{
+                    console.log(res.data);
+                    if(res.data.state){
+                        alert(res.data.msg+",点击确定进入主页!");
+                        //将登录用户信息放入localStorage key  value
+                        localStorage.setItem("user",JSON.stringify(res.data.user));
+                        location.href="http://localhost:8080/#/Home";
+                    }else{
+                        alert(res.data.msg);
+                    }
+                });
+            },
       // <!--进入注册页-->
       gotoRegister() {
         this.$router.push({
           path: "/register"
+
         });
       },
       submitForm(formName) {
@@ -81,6 +78,9 @@ export default {
     }
   };
 </script>
+
+
+
 
 <style acoped>
 .login-form {

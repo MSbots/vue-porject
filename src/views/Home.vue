@@ -5,7 +5,6 @@
         <span>
             <h1>Welcome! {{ user.userName }}</h1>
         </span>
-<<<<<<< HEAD
         <el-container id="edit" v-show="editFlag" style="height: 300px; border: 1px solid #eee">
         <el-form
           :model="ruleForm2"
@@ -33,11 +32,6 @@
   </el-form>
   </el-container>
  <el-container style="height: 500px; border: 1px solid #eee">
-=======
-        
-        
-        <el-container style="height: 500px; border: 1px solid #eee">
->>>>>>> 5731eea2819ebcf632b65fff384d441f53ce29ee
   <!-- <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
     <el-menu :default-openeds="['1', '3']">
       <el-submenu index="1">
@@ -119,7 +113,7 @@
                 <el-button
                 size="medium"
                 type="danger"
-                @click.native.prevent="deleteRow(scope.$index, tableData)">删除</el-button>
+                @click.native.prevent="deleteRow(id)">删除</el-button>
            </template>
         </el-table-column>
       </el-table>
@@ -160,7 +154,6 @@
 <script>
  const axios = require('axios');
   export default {
-<<<<<<< HEAD
     data() { 
        // <!--验证年龄是否合法-->
     let checkAge = (rule, value, callback) => {
@@ -194,19 +187,12 @@
         callback();
       }
     }; 
-=======
-    data() {  
->>>>>>> 5731eea2819ebcf632b65fff384d441f53ce29ee
    
       return {     
         user: {
           realName: ""
-<<<<<<< HEAD
         },   
         editFlag: false,      
-=======
-        },     
->>>>>>> 5731eea2819ebcf632b65fff384d441f53ce29ee
         dialogVisible: false, //控制对话框的显示和隐藏
         dialog: false,
         // ---表格数据
@@ -232,23 +218,9 @@
       
     },
     methods: {
-<<<<<<< HEAD
               //  --打开编辑框
       editOpen(){
       this.editFlag = !this.editFlag;
-=======
-      //退出
-      loginout(){
-        localStorage.removeItem("user");
-        location.reload(true);
-      },
-
-       handleCommand(command) {
-      this.$message("click on item " + command);
-      if (command == "a") {
-        this.dialogVisible = true;
-      }
->>>>>>> 5731eea2819ebcf632b65fff384d441f53ce29ee
     },
     
       //退出
@@ -266,18 +238,24 @@
       }).then(res =>{
         console.log(res.data)
       })
-<<<<<<< HEAD
        location.reload(true);
-=======
->>>>>>> 5731eea2819ebcf632b65fff384d441f53ce29ee
       this.dialogVisible = false;
 
     },
     
        // --删除信息
-      deleteRow(index, rows) {
-        rows.splice(index, 1);
+      deleteRow(id) {
+         axios.delete("http://localhost:8090/employee/delete?id="+id).then(res=>
+         alert("删除成功！"))
       },
+      findAll(){
+     //列表展示
+     var _this =this;
+     axios.get("http://localhost:8090/employee/findAll").then(res=>{
+       _this.tableData=res.data;
+       console.log(_this.tableData);
+     })
+      }
      
     },
     created() {
@@ -289,12 +267,7 @@
            alert("还未登录，请点击登录")
            location.href="/login/index"
      } 
-     //列表展示
-     var _this =this;
-     axios.get("http://localhost:8090/employee/findAll").then(res=>{
-       _this.tableData=res.data;
-       console.log(_this.tableData);
-     })
+    this.findAll();
 
      },
   };
