@@ -11,23 +11,27 @@ const routes = [
   {
     path: "/",
     redirect: "/login/index",
+    // redirect: "/home",
   },
+  //登录
   {
     path: "/login/index",
     name: "index",
     component: Index
   },
+  //首页
   {
     path: "/home",
     name: "Home",
     component: Home
   },
-  
+  //注册
   {
     path: "/register",
     name: "Register",
     component: Register
   }
+
 ];
 
 const router = new VueRouter({

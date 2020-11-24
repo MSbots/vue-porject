@@ -8,23 +8,21 @@
           status-icon
           :rules="rules2"
           ref="ruleForm2"
-          label-width="100px"
+          label-width="0"
           class="demo-ruleForm"
         >
-          <el-form-item prop="userName" label="用户名：">
-            <el-input v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入用户名" maxlength="30"></el-input>
+          <el-form-item prop="userName">
+            <el-input v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入用户名"></el-input>
           </el-form-item>
-           <el-form-item prop="realName" label="姓名：">
-            <el-input v-model="ruleForm2.realName" auto-complete="off" placeholder="请输入真实姓名" maxlength="20"></el-input>
+           <el-form-item prop="realName">
+            <el-input v-model="ruleForm2.realName" auto-complete="off" placeholder="请输入真实姓名"></el-input>
           </el-form-item>         
-          <el-form-item prop="password" label="密码：">
-            <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="输入密码" maxlength="30"></el-input>
+          <el-form-item prop="password">
+            <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="输入密码"></el-input>
           </el-form-item>
-          <el-form-item prop="checkPass" label="密码：">
-            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="确认密码" maxlength="30"></el-input>
+          <el-form-item prop="checkPass">
+            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="确认密码"></el-input>
           </el-form-item>
-          </el-form>
-          <el-form label-width="10px">
            <el-form-item >          
            <el-radio v-model="ruleForm2.sex" label="男" class="radio">男</el-radio>   
            <el-radio v-model="ruleForm2.sex" label="女">女</el-radio>
@@ -45,9 +43,9 @@
 </template>
 
 <script>
-
+ const axios = require('axios');
 export default {
-  name: "Register",  
+  name: "Register", 
   data() {  
     // <!--验证密码-->
     let validatePass = (rule, value, callback) => {
@@ -84,6 +82,7 @@ export default {
          callback();
        }
     };
+
     return { 
         url: "",
         smscode: "",
@@ -92,14 +91,16 @@ export default {
         checkPass: "",
         userName: "",
         sex:"男",
-        realName:""      
+        realName:""
+       
       },
       rules2: {
         password: [{ validator: validatePass, trigger: 'change' }],
         checkPass: [{validator:validatePass2, trigger: 'change' }],
         userName: [{ validator: validateUsename, trigger: 'change' }],      
         realName: [{ validator: validateRealname, trigger: 'change' }],
-      },  
+      },
+    
     }
   }, 
   methods: {
@@ -117,11 +118,11 @@ export default {
 			//获取验证码的
 			getSrc(){
 				var  _this = this;
-				this.$axios.get(this.GLOBAL.BASE_URL+"user/getImage?time="+Math.random()).then(res=>{
+				axios.get("http://localhost:8090/user/getImage?time="+Math.random()).then(res=>{
 					_this.url = res.data;
+
 				});
-      },
-      
+			},
       //用来注册用户信息
 			register(){
         if(this.ruleForm2.userName==""){
@@ -132,12 +133,7 @@ export default {
           alert("密码不一致")
         }
         else{
-          this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,
-          {userName:this.ruleForm2.userName,
-          realName: this.ruleForm2.realName,
-           password: this.$md5(this.ruleForm2.password),
-           sex: this.ruleForm2.sex
-           }).then(res=>{
+          axios.post("http://localhost:8090/user/register?code="+this.smscode,this.ruleForm2).then(res=>{
           console.log(res.data);         
 					if(res.data.state){
 						alert(res.data.msg+",点击确定跳转至登录页面!");
@@ -147,9 +143,7 @@ export default {
 					}
 				});}
 			}
-    },
-    
-    //生命周期
+		},
 		created(){
 			//获取验证码
 			this.getSrc();

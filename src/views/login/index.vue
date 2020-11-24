@@ -18,13 +18,13 @@
 </template>
 
 <script>
-
+  const axios = require('axios');
 export default {
     data() {
       return {
-      
+       user:{},
         form: {
-          userName: "test",
+          userName: "cc",
           password: "123"
         },
         rules: {
@@ -42,16 +42,16 @@ export default {
       
     },
     methods: {
-      // <!--进入系统-->     
+      // <!--进入系统-->
        onSubmit(){
                 //发送登录请求
-                 this.$axios.put(this.GLOBAL.BASE_URL+"user/login", {userName:this.form.userName, password: this.$md5(this.form.password)}).then(res=>{
+                axios.put("http://localhost:8090/user/login",this.form).then(res=>{
                     console.log(res.data);
                     if(res.data.state){
-                        alert(res.data.msg+",点击确定进入主页!");
+                        alert(res.data.msg+"点击确定进入主页!");
                         //将登录用户信息放入localStorage key  value
                         localStorage.setItem("user",JSON.stringify(res.data.user));
-                        location.href="http://localhost:8080/#/Home";
+                        location.href="http://localhost:8080/#/home";
                     }else{
                         alert(res.data.msg);
                     }
