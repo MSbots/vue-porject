@@ -6,20 +6,20 @@
         </span>
           <el-container id="edit" v-if="editFlag" style="height: 300px; border: 1px solid #eee">
         <el-form
-          :rules="rules2"   
+          :rules="rules"   
           :model="newData"   
           label-width="80px"            
         >
          <el-form-item label="ID" >
             <el-input disabled v-model="newData.id"></el-input>     
           </el-form-item>
-          <el-form-item label="姓名">
+          <el-form-item label="姓名" prop="name">
             <el-input  placeholder="请输入新的姓名" v-model="newData.name" ></el-input>
           </el-form-item>
-          <el-form-item label="工资">
+          <el-form-item label="工资" prop="salary">
             <el-input  placeholder="请输入新的工资" v-model="newData.salary"></el-input>
           </el-form-item>
-		  <el-form-item label="年龄">
+		  <el-form-item label="年龄" prop="age">
 		    <el-input  placeholder="请输入新的年龄" v-model="newData.age"></el-input>
 		  </el-form-item>	  
           <el-form-item>
@@ -75,15 +75,15 @@
 
 <el-dialog title="添加员工" :visible.sync="dialogVisible" width="50%">
   <span>
-    <el-form ref="form" :model="form" label-width="100px">
+    <el-form ref="form" :rules="rules" :model="form" label-width="100px">
      
-      <el-form-item label="名称:">
+      <el-form-item label="名称:"  prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
-      <el-form-item label="工资:">
+      <el-form-item label="工资:" prop="salary">
         <el-input v-model="form.salary"></el-input>
       </el-form-item>
-      <el-form-item label="年龄:">
+      <el-form-item label="年龄:" prop="age">
         <el-input v-model="form.age"></el-input>
       </el-form-item>
       <el-form-item>
@@ -99,42 +99,11 @@
 
 <!----------------------------------script------------------------------------------------ -->
 <script>
-
+import {validateContacts,validateNumber,isInteger,isOneToNinetyNine,checkMax20000}from'../rules' ;
+ 
   export default {
     data() { 
 
-       // <!--验证年龄是否合法-->
-    let checkAge = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入新的年龄"))
-      } else if(value > 0){
-       
-        callback()
-      }else{
-      		  callback(new Error('请输入正确的年龄格式'))
-      }
-    }
-    // <!--检验工资是否合法-->
-    let checkSalary = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入新的工资"))
-      } else if(value > 0){
-       
-        callback()
-      }else{
-		  callback(new Error('请输入正确的工资格式'))
-	  }
-    }
-    // <!--检验姓名是否合法-->
-    let checkName = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入真实姓名"));
-      } else if (value.length > 20) {
-        callback(new Error("姓名超过长度限制"));
-      } else {
-        callback();
-      }
-    }; 
    
       return { 
          newData:{
@@ -153,21 +122,33 @@
         tableData:[],
         // 对话框表单数据
         form: {
-          name: "",
-          salary: "",
-          age: ""
+          name: "张三",
+          salary: "123",
+          age: "12"
         },
+         rules: {
+          name: [
+            {required: true, message: "名字不能为空", trigger: 'change'},
+            {validator: validateContacts,trigger: 'blur'}
+          ],
+          salary: [
+            {required: true, message: "工资不能为空", trigger: 'change'},
+            {validator: validateNumber,trigger: 'change'},
+            {validator: checkMax20000,trigger: 'change'}
+          ],
+          age: [
+            {required: true, message: "年龄不能为空", trigger: 'change'},
+            {validator: isInteger,trigger: 'change'},
+            {validator: isOneToNinetyNine,trigger: 'change'}
+          ],
+      },
           ruleForm2: {       
           salary: "",
           name: "",
           user: "",
 		      age:""
         },
-         rules2: {
-        salary: [{ validator: checkSalary, trigger: 'change' }],
-        name: [{ validator: checkName, trigger: 'change' }],
-        age: [{ validator: checkAge, trigger: 'change' }]
-      },
+   
       }
       
     },
@@ -182,7 +163,13 @@
       this.newData.age = nowData.age;
   },
      //提交修改数据
-      newForm(newData){
+      newForm(newData){ 
+        var a=localStorage.getItem("a");
+      var b=localStorage.getItem("b");
+      var c=localStorage.getItem("c");
+      var d=localStorage.getItem("d");
+      var e=localStorage.getItem("e");
+      if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
         if(this.newData.name==""){
             alert("姓名不能为空")
         }else if(this.newData.salary==0){
@@ -196,7 +183,9 @@
      this.editFlag = !this.editFlag;
      location.reload(true);
         }
-
+}else{
+        alert("err")
+      }
      },
 
     
@@ -208,6 +197,12 @@
   
 // 将表单数据添加到表格中去
     onSubmit() {
+       var a=localStorage.getItem("a");
+      var b=localStorage.getItem("b");
+      var c=localStorage.getItem("c");
+      var d=localStorage.getItem("d");
+      var e=localStorage.getItem("e");
+       if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
       this.$axios({
         method:"post",
         url:this.GLOBAL.BASE_URL+"employee/insert",
@@ -217,8 +212,12 @@
       })
        location.reload(true);
       this.dialogVisible = false;
-
-    },   
+ }else{
+        alert("err")
+      }
+     
+    },
+       
  // --删除员工信息
       deleteRow(index) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
