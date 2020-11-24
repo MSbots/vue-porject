@@ -24,8 +24,8 @@ export default {
       return {
       
         form: {
-          userName: "张三",
-          password: "44444"
+          userName: "test",
+          password: "123"
         },
         rules: {
           userName: [
@@ -44,9 +44,8 @@ export default {
     methods: {
       // <!--进入系统-->     
        onSubmit(){
-        
                 //发送登录请求
-                 this.$axios.put(this.GLOBAL.BASE_URL+"user/login",this.form).then(res=>{
+                 this.$axios.put(this.GLOBAL.BASE_URL+"user/login", {userName:this.form.userName, password: this.$md5(this.form.password)}).then(res=>{
                     console.log(res.data);
                     if(res.data.state){
                         alert(res.data.msg+",点击确定进入主页!");

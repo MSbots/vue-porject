@@ -130,7 +130,12 @@ export default {
           alert("密码不一致")
         }
         else{
-          this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,this.ruleForm2).then(res=>{
+          this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,
+          {userName:this.ruleForm2.userName,
+          realName: this.ruleForm2.realName,
+           password: this.$md5(this.ruleForm2.password),
+           sex: this.ruleForm2.sex
+           }).then(res=>{
           console.log(res.data);         
 					if(res.data.state){
 						alert(res.data.msg+",点击确定跳转至登录页面!");
