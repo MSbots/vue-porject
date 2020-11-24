@@ -1,87 +1,34 @@
 <template>
     <div class="hello">
       
-      
         <span>
             <h1>Welcome! {{ user.userName }}</h1>
         </span>
-        <el-container id="edit" v-show="editFlag" style="height: 300px; border: 1px solid #eee">
+          <el-container id="edit" v-if="editFlag" style="height: 300px; border: 1px solid #eee">
         <el-form
-          :model="ruleForm2"
-          status-icon
-          :rules="rules2"
-          ref="ruleForm2"
-          label-width="80px"
-          class="demo-ruleForm"
+          :rules="rules2"   
+          :model="newData"   
+          label-width="80px"            
         >
-         <el-form-item label="ID" prop="user">
-            <el-input disabled value="cong999999"></el-input>
+         <el-form-item label="ID" >
+            <el-input disabled v-model="newData.id"></el-input>     
           </el-form-item>
-          <el-form-item label="姓名" prop="name">
-            <el-input v-model="ruleForm2.name" auto-complete="off" placeholder="请输入新的姓名"></el-input>
+          <el-form-item label="姓名">
+            <el-input  placeholder="请输入新的姓名" v-model="newData.name" ></el-input>
           </el-form-item>
-          <el-form-item label="工资" prop="salary">
-            <el-input v-model="ruleForm2.salary" auto-complete="off" placeholder="请输入新的工资"></el-input>
+          <el-form-item label="工资">
+            <el-input  placeholder="请输入新的工资" v-model="newData.salary"></el-input>
           </el-form-item>
-		  <el-form-item label="年龄" prop="age">
-		    <el-input v-model="ruleForm2.age" auto-complete="off" placeholder="请输入新的年龄"></el-input>
+		  <el-form-item label="年龄">
+		    <el-input  placeholder="请输入新的年龄" v-model="newData.age"></el-input>
 		  </el-form-item>	  
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm2')" style="width:100%;">确认</el-button>
+            <el-button type="primary" @click="newForm(newData)" style="width:50%;">确认</el-button>
           </el-form-item>
   </el-form>
   </el-container>
- <el-container style="height: 500px; border: 1px solid #eee">
-  <!-- <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
-    <el-menu :default-openeds="['1', '3']">
-      <el-submenu index="1">
-        <template slot="title"><i class="el-icon-message"></i>导航一</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="1-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="1-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-submenu index="2">
-        <template slot="title"><i class="el-icon-menu"></i>导航二</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="2-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="2-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="2-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-      <el-submenu index="3">
-        <template slot="title"><i class="el-icon-setting"></i>导航三</template>
-        <el-menu-item-group>
-          <template slot="title">分组一</template>
-          <el-menu-item index="3-1">选项1</el-menu-item>
-          <el-menu-item index="3-2">选项2</el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group title="分组2">
-          <el-menu-item index="3-3">选项3</el-menu-item>
-        </el-menu-item-group>
-        <el-submenu index="3-4">
-          <template slot="title">选项4</template>
-          <el-menu-item index="3-4-1">选项4-1</el-menu-item>
-        </el-submenu>
-      </el-submenu>
-    </el-menu>
-  </el-aside> -->
-  
+
+ <el-container style="height: 500px; border: 1px solid #eee"> 
   <el-container>
     <el-header style="text-align: right; font-size: 12px">
       <el-dropdown>
@@ -109,7 +56,7 @@
             <template slot-scope="scope">
                 <el-button
                 size="medium"
-                @click="editOpen()">编辑</el-button>
+                @click="editOpen(tableData[scope.$index])">编辑</el-button>
                 <el-button
                 size="medium"
                 type="danger"
@@ -152,7 +99,7 @@
 
 <!----------------------------------script------------------------------------------------ -->
 <script>
- const axios = require('axios');
+
   export default {
     data() { 
 
@@ -190,7 +137,12 @@
     }; 
    
       return { 
-           
+         newData:{
+          id: "",
+          name: "",
+          salary: "",
+          age: ""
+        },      
         user: {
           realName: ""
         },   
@@ -220,22 +172,45 @@
       
     },
     methods: {
-              //  --打开编辑框
-      editOpen(){
+ 
+             //  --打开编辑框
+      editOpen(nowData){
       this.editFlag = !this.editFlag;
-    },
+      this.newData.id = nowData.id;
+      this.newData.name = nowData.name;
+      this.newData.salary = nowData.salary;
+      this.newData.age = nowData.age;
+  },
+     //提交修改数据
+      newForm(newData){
+        if(this.newData.name==""){
+            alert("姓名不能为空")
+        }else if(this.newData.salary==0){
+            alert("工资不能为空")
+        }else if(this.newData.age==0){
+            alert("年龄不能为空")
+        }else{
+        this.$axios.put(this.GLOBAL.BASE_URL+"employee/update",newData).then(res=>{
+       console.log(res.data)
+     })
+     this.editFlag = !this.editFlag;
+     location.reload(true);
+        }
+
+     },
+
     
-      //退出
+    //安全退出，删除浏览器存储的User信息
       loginout(){
         localStorage.removeItem("user");
         location.reload(true);
       },
   
-    // 将表单数据添加到表格中去
+// 将表单数据添加到表格中去
     onSubmit() {
-      axios({
+      this.$axios({
         method:"post",
-        url:"http://localhost:8090/employee/insert",
+        url:this.GLOBAL.BASE_URL+"employee/insert",
         data:this.form,
       }).then(res =>{
         console.log(res.data)
@@ -244,38 +219,34 @@
       this.dialogVisible = false;
 
     },   
-       // --删除信息
+ // --删除员工信息
       deleteRow(index) {
       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'
-      }).then(() => {    
-      //删除
-      axios.get("http://localhost:8090/employee/delete/"+index).then((res) =>{
+      }).then(() => {     
+     this.$axios.get(this.GLOBAL.BASE_URL+"employee/delete/"+index).then((res) =>{
         console.log(res.data);
          this.findAll();
-      })
-      
+      })     
     }).catch(() => {
       this.$message({
         type: 'info',
         message: '已取消删除'
       });
-    });
-   
+    }); 
   },
-
-
+ //刷新展示数据列表
      findAll(){
       var _this =this;
-     axios.get("http://localhost:8090/employee/findAll").then(res=>{
+     this.$axios.get(this.GLOBAL.BASE_URL+"employee/findAll").then(res=>{
        _this.tableData=res.data;
        console.log(_this.tableData);
      })
      }
     },
-
+//生命周期函数
     created() {
      var userString =localStorage.getItem("user");
      if(userString){
@@ -286,7 +257,6 @@
      } 
      //列表展示
        this.findAll();
-
      },
   };
  

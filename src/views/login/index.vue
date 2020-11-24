@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  const axios = require('axios');
+
 export default {
     data() {
       return {
@@ -42,10 +42,11 @@ export default {
       
     },
     methods: {
-      // <!--进入系统-->
+      // <!--进入系统-->     
        onSubmit(){
+        
                 //发送登录请求
-                axios.put("http://localhost:8090/user/login",this.form).then(res=>{
+                 this.$axios.put(this.GLOBAL.BASE_URL+"user/login",this.form).then(res=>{
                     console.log(res.data);
                     if(res.data.state){
                         alert(res.data.msg+",点击确定进入主页!");

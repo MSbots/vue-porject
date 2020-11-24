@@ -43,9 +43,9 @@
 </template>
 
 <script>
- const axios = require('axios');
+
 export default {
-  name: "Register", 
+  name: "Register",  
   data() {  
     // <!--验证密码-->
     let validatePass = (rule, value, callback) => {
@@ -82,7 +82,6 @@ export default {
          callback();
        }
     };
-
     return { 
         url: "",
         smscode: "",
@@ -91,16 +90,14 @@ export default {
         checkPass: "",
         userName: "",
         sex:"男",
-        realName:""
-       
+        realName:""      
       },
       rules2: {
         password: [{ validator: validatePass, trigger: 'change' }],
         checkPass: [{validator:validatePass2, trigger: 'change' }],
         userName: [{ validator: validateUsename, trigger: 'change' }],      
         realName: [{ validator: validateRealname, trigger: 'change' }],
-      },
-    
+      },  
     }
   }, 
   methods: {
@@ -118,11 +115,11 @@ export default {
 			//获取验证码的
 			getSrc(){
 				var  _this = this;
-				axios.get("http://localhost:8090/user/getImage?time="+Math.random()).then(res=>{
+				this.$axios.get(this.GLOBAL.BASE_URL+"user/getImage?time="+Math.random()).then(res=>{
 					_this.url = res.data;
-
 				});
-			},
+      },
+      
       //用来注册用户信息
 			register(){
         if(this.ruleForm2.userName==""){
@@ -133,7 +130,7 @@ export default {
           alert("密码不一致")
         }
         else{
-          axios.post("http://localhost:8090/user/register?code="+this.smscode,this.ruleForm2).then(res=>{
+          this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,this.ruleForm2).then(res=>{
           console.log(res.data);         
 					if(res.data.state){
 						alert(res.data.msg+",点击确定跳转至登录页面!");
@@ -143,7 +140,9 @@ export default {
 					}
 				});}
 			}
-		},
+    },
+    
+    //生命周期
 		created(){
 			//获取验证码
 			this.getSrc();
