@@ -12,16 +12,16 @@
           class="demo-ruleForm"
         >
           <el-form-item prop="userName" label="用户名：">
-            <el-input v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入用户名"></el-input>
+            <el-input v-model="ruleForm2.userName" auto-complete="off" placeholder="请输入用户名" maxlength="30"></el-input>
           </el-form-item>
            <el-form-item prop="realName" label="姓名：">
-            <el-input v-model="ruleForm2.realName" auto-complete="off" placeholder="请输入真实姓名"></el-input>
+            <el-input v-model="ruleForm2.realName" auto-complete="off" placeholder="请输入真实姓名" maxlength="20"></el-input>
           </el-form-item>         
           <el-form-item prop="password" label="密码：">
-            <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="输入密码"></el-input>
+            <el-input type="password" v-model="ruleForm2.password" auto-complete="off" placeholder="输入密码" maxlength="30"></el-input>
           </el-form-item>
           <el-form-item prop="checkPass" label="密码：">
-            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="确认密码"></el-input>
+            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" placeholder="确认密码" maxlength="30"></el-input>
           </el-form-item>
           </el-form>
           <el-form label-width="10px">
