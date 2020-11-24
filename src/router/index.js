@@ -16,19 +16,19 @@ const routes = [
   //登录
   {
     path: "/login/index",
-    name: "index",
+    name: "登录",
     component: Index
   },
   //首页
   {
     path: "/home",
-    name: "Home",
+    name: "首页",
     component: Home
   },
   //注册
   {
     path: "/register",
-    name: "Register",
+    name: "注册",
     component: Register
   }
 

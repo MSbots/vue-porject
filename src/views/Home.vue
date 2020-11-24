@@ -8,34 +8,10 @@
               <h1 style="font-size: 30px; text-align: center;">欢迎使用员工管理系统</h1>
             </span>
           </el-header>
-          <el-header style="text-align: right; font-size: 18px">
+          <el-header style="text-align: right; font-size: 20px">
             <span>Welcome! {{ user.realName }}</span>
             <el-button type="text" style="margin-left: 10px;" @click="loginout">退出登录</el-button>
           </el-header>
-          <!-- 编辑框页面 -->
-          <el-container id="edit" v-if="editFlag" style="height: 300px; border: 1px solid #eee">
-             <el-form
-               :rules="rules2"   
-               :model="newData"   
-               label-width="80px"
-             >
-               <el-form-item label="ID">
-                  <el-input disabled v-model="newData.id"></el-input>
-                </el-form-item>
-                <el-form-item label="姓名">
-                  <el-input placeholder="请输入新的姓名" v-model="newData.name"></el-input>
-                </el-form-item>
-                <el-form-item label="工资">
-                  <el-input placeholder="请输入新的工资" v-model="newData.salary"></el-input>
-                </el-form-item>
-                <el-form-item label="年龄">
-                  <el-input placeholder="请输入新的年龄" v-model="newData.age"></el-input>
-                </el-form-item>	  
-                <el-form-item>
-                  <el-button type="primary" @click="newForm(newData)" style="width:50%;">确认</el-button>
-                </el-form-item>
-             </el-form>
-          </el-container>
           
           <el-main>
             <el-table
@@ -46,7 +22,7 @@
                 label="编号"
                 width="180">
               </el-table-column>
-              <el-table-column prop="name" label="姓名" width="180"></el-table-column>
+              <el-table-column label="姓名" prop="name" width="180"></el-table-column>
               <el-table-column label="工资" prop="salary"></el-table-column>
               <el-table-column label="年龄" prop="age"></el-table-column>
               <el-table-column align="right">
@@ -87,14 +63,14 @@
       <el-button @click.native="dialogVisible = true" type="primary" style="margin: 10px 0 0 10px">添加员工</el-button>
       <!-- 添加员工窗口 -->
       <el-dialog title="添加员工" :visible.sync="dialogVisible" width="50%">
-          <el-form ref="form" :model="form" label-width="100px">
-            <el-form-item label="名称:">
-              <el-input v-model="form.name"></el-input>
+          <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+            <el-form-item label="姓名:" prop="name">
+              <el-input v-model="form.name"  maxlength="30"></el-input>
             </el-form-item>
-            <el-form-item label="工资:">
+            <el-form-item label="工资:" prop="salary">
               <el-input v-model="form.salary"></el-input>
             </el-form-item>
-            <el-form-item label="年龄:">
+            <el-form-item label="年龄:" prop="age">
               <el-input v-model="form.age"></el-input>
             </el-form-item>
             <el-form-item>
@@ -102,48 +78,40 @@
                   <el-button @click="dialogVisible = false">取消</el-button>
             </el-form-item>
           </el-form>    
-      </el-dialog>    
+      </el-dialog>   
+      <!-- 编辑框窗口 -->
+      <el-dialog title="编辑员工" :visible.sync="editFlag" width="50%">
+       <el-form
+         :rules="rules"   
+         :model="newData"   
+         label-width="80px"
+       >
+         <el-form-item label="ID">
+            <el-input disabled v-model="newData.id"></el-input>
+          </el-form-item>
+          <el-form-item label="姓名" prop="name">
+            <el-input placeholder="请输入新的姓名" v-model="newData.name" maxlength="30"></el-input>
+          </el-form-item>
+          <el-form-item label="工资" prop="salary">
+            <el-input placeholder="请输入新的工资" v-model="newData.salary"></el-input>
+          </el-form-item>
+          <el-form-item label="年龄" prop="age">
+            <el-input placeholder="请输入新的年龄" v-model="newData.age"></el-input>
+          </el-form-item>	  
+          <el-form-item>
+            <el-button type="primary" @click="newForm(newData)">确认</el-button>
+          </el-form-item>
+       </el-form>
+      </el-dialog>
     </div>
 </template>
 
 <!----------------------------------script------------------------------------------------ -->
 <script>
+import {validateContacts,validateNumber,isInteger,isOneToNinetyNine,checkMax20000}from'../rules';
 const axios = require('axios');
   export default{
     data() {
-      // 验证年龄是否合法
-      let checkAge = (rule, value, callback) => {
-        if (value === "") {
-          callback(new Error("请输入新的年龄"))
-        } else if(value > 0){
-        
-          callback()
-        }else{
-              callback(new Error('请输入正确的年龄格式'))
-        }
-      }
-      // 检验工资是否合法
-      let checkSalary = (rule, value, callback) => {
-        if (value === "") {
-          callback(new Error("请输入新的工资"))
-        } else if(value > 0){
-        
-          callback()
-        }else{
-        callback(new Error('请输入正确的工资格式'))
-      }
-      }
-      // 检验姓名是否合法
-      let checkName = (rule, value, callback) => {
-        if (value === "") {
-          callback(new Error("请输入真实姓名"));
-        } else if (value.length > 20) {
-          callback(new Error("姓名超过长度限制"));
-        } else {
-          callback();
-        }
-      }; 
-
       return {
         // 保存编辑框的数据
         newData:{
@@ -177,14 +145,29 @@ const axios = require('axios');
           salary: "",
           age: ""
         },
-        rules2: {
-        salary: [{ validator: checkSalary, trigger: 'change' }],
-        name: [{ validator: checkName, trigger: 'change' }],
-        age: [{ validator: checkAge, trigger: 'change' }]
+        rules: {
+          name: [
+            {required: true, message: "名字不能为空", trigger: 'change'},
+            {validator: validateContacts,trigger: 'blur'}
+          ],
+          salary: [
+            {required: true, message: "工资不能为空", trigger: 'change'},
+            {validator: validateNumber,trigger: 'change'},
+            {validator: checkMax20000,trigger: 'change'}
+          ],
+          age: [
+            {required: true, message: "年龄不能为空", trigger: 'change'},
+            {validator: isInteger,trigger: 'change'},
+            {validator: isOneToNinetyNine,trigger: 'change'}
+          ],
         },
       };
     },
     methods: {
+      // 重置窗口的数据
+      resetForm(){
+        
+      },
       // 打开编辑框
       editOpen(nowData){
         this.editFlag = !this.editFlag;
@@ -195,20 +178,33 @@ const axios = require('axios');
       },
       //提交修改数据
       newForm(newData){
-        if(this.newData.name==""){
-            alert("姓名不能为空")
-        }else if(this.newData.salary==0){
-            alert("工资不能为空")
-        }else if(this.newData.age==0){
-            alert("年龄不能为空")
+        var a=localStorage.getItem("a");
+        var b=localStorage.getItem("b");
+        var c=localStorage.getItem("c");
+        var d=localStorage.getItem("d");
+        var e=localStorage.getItem("e");
+        if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
+          if(this.newData.name==""){
+              alert("姓名不能为空")
+          }else if(this.newData.salary==0){
+              alert("工资不能为空")
+          }else if(this.newData.age==0){
+              alert("年龄不能为空")
+          }else{
+            this.$axios.put(this.GLOBAL.BASE_URL+"employee/update",newData).then(res=>{
+              this.$message({
+                message: '修改成功！',
+                type: 'success'
+              });
+              console.log(res.data)
+            })
+            this.editFlag = !this.editFlag;
+            location.reload(true);
+          }
         }else{
-          this.$axios.put(this.GLOBAL.BASE_URL+"employee/update",newData).then(res=>{
-            console.log(res.data)
-          })
-          this.editFlag = !this.editFlag;
-          location.reload(true);
+          alert("修改失败！请输入正确格式！")
         }
-     },
+      },
 
       // 处理分页
       findPage(page){
@@ -237,31 +233,48 @@ const axios = require('axios');
       },
       // 将表单数据添加到表格中去
       onSubmit() {
-        axios({
-          method:"post",
-          url:"http://localhost:8090/employee/insert",
-          data:this.form,
-        }).then(res =>{
-          console.log(res.data)
-        })
-        this.dialogVisible = false;
-        location.reload(true);
+        var a=localStorage.getItem("a");
+        var b=localStorage.getItem("b");
+        var c=localStorage.getItem("c");
+        var d=localStorage.getItem("d");
+        var e=localStorage.getItem("e");
+        if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
+          axios({
+            method:"post",
+            url:"http://localhost:8090/employee/insert",
+            data:this.form,
+          }).then(res =>{
+            console.log(res.data)
+            this.$message({
+              message: '添加成功！',
+              type: 'success'
+            });
+          })
+          this.dialogVisible = false;
+          location.reload(true);
+        }else{
+          alert("添加失败！请输入正确格式！")
+        }
       },
       // --删除员工信息
       deleteRow(index) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        this.$confirm('将永久删除该员工信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {     
           this.$axios.get(this.GLOBAL.BASE_URL+"employee/delete/"+index).then((res) =>{
             console.log(res.data);
+            this.$message({
+              message: '删除成功！',
+              type: 'success'
+            });
             this.findAll();
           })     
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
+            message: '已取消！'
           });
         }); 
       },
