@@ -113,7 +113,7 @@
                 <el-button
                 size="medium"
                 type="danger"
-                @click.native.prevent="deleteRow(id)">删除</el-button>
+                @click.native.prevent="deleteRow( tableData[scope.$index].id)">删除</el-button>
            </template>
         </el-table-column>
       </el-table>
@@ -155,6 +155,7 @@
  const axios = require('axios');
   export default {
     data() { 
+
        // <!--验证年龄是否合法-->
     let checkAge = (rule, value, callback) => {
       if (value === "") {
@@ -188,7 +189,8 @@
       }
     }; 
    
-      return {     
+      return { 
+           
         user: {
           realName: ""
         },   
@@ -241,33 +243,49 @@
        location.reload(true);
       this.dialogVisible = false;
 
-    },
-    
+    },   
        // --删除信息
-      deleteRow(id) {
-         axios.delete("http://localhost:8090/employee/delete?id="+id).then(res=>
-         alert("删除成功！"))
-      },
-      findAll(){
-     //列表展示
-     var _this =this;
+      deleteRow(index) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+      }).then(() => {    
+      //删除
+      axios.get("http://localhost:8090/employee/delete/"+index).then((res) =>{
+        console.log(res.data);
+         this.findAll();
+      })
+      
+    }).catch(() => {
+      this.$message({
+        type: 'info',
+        message: '已取消删除'
+      });
+    });
+   
+  },
+
+
+     findAll(){
+      var _this =this;
      axios.get("http://localhost:8090/employee/findAll").then(res=>{
        _this.tableData=res.data;
        console.log(_this.tableData);
      })
-      }
-     
+     }
     },
+
     created() {
      var userString =localStorage.getItem("user");
      if(userString){
         this.user=JSON.parse(userString);
-        console.log(this.user);
      }else{
            alert("还未登录，请点击登录")
            location.href="/login/index"
      } 
-    this.findAll();
+     //列表展示
+       this.findAll();
 
      },
   };
