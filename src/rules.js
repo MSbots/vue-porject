@@ -6,11 +6,11 @@ localStorage.setItem('e','0');
 // 中文校验
 export const validateContacts = (rule, value, callback) => {
     if (!value) {
-      return callback(new Error('请输入中文或英文')),
+      return callback(new Error('请输入中文')),
       localStorage.setItem('a','1')
     }
-    if (!/^[\u0391-\uFFE5A-Za-z]{1,30}$/.test(value)) {
-      callback(new Error('不可输入特殊字符和数字')),
+    if (!/^[\u0391-\uFFE5A-Za-z]+$/.test(value)) {
+      callback(new Error('不可输入特殊字符')),
       localStorage.setItem('a','1');
     } else {
       callback(),
@@ -18,7 +18,6 @@ export const validateContacts = (rule, value, callback) => {
       
     }
   }
-  
 //   纯数字校验
 export const validateNumber = (rule, value, callback) => {
     let numberReg = /^\d+$|^\d+[.]?\d+$/
@@ -86,10 +85,10 @@ export function isOneToNinetyNine(rule, value, callback) {
     if (value == '' || value == undefined || value == null) {
       callback();
     } else if (!Number(value)) {
-      callback(new Error('请输入正整数，值为【1,20000】')),
+      callback(new Error('请输入[1,20000]之间的数字')),
       localStorage.setItem('d','1');
     } else if (value < 1 || value > 20000) {
-      callback(new Error('请输入正整数，值为【1,20000】')),
+      callback(new Error('请输入[1,20000]之间的数字')),
       localStorage.setItem('d','1');
     } else {
       callback(),
