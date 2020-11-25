@@ -102,7 +102,7 @@ export default {
       },
       rules2: {
         password: [{ validator: validatePass, trigger: 'change' }],
-        checkPass: [{validator:validatePass2, trigger: 'change' }],
+        checkPass: [{validator:validatePass2, trigger: 'blur' }],
         userName: [{ validator: validateUsename, trigger: 'change' }],      
         realName: [{ validator: validateRealname, trigger: 'change' }],
       },
