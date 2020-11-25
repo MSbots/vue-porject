@@ -147,8 +147,8 @@ const axios = require('axios');
         },
         rules: {
           name: [
-            {required: true, message: "名字不能为空", trigger: 'change'},           
-            {validator: validateContacts,trigger: 'change'}
+            {required: true, message: "名字不能为空", trigger: 'change'},
+            {validator: validateContacts,trigger: 'blur'}
           ],
           salary: [
             {required: true, message: "工资不能为空", trigger: 'change'},
