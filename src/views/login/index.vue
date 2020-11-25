@@ -1,4 +1,5 @@
 <template>
+
   <div class="login-container">
     <el-form ref="form" :model="form" label-width="80px" class="login-form">
       <h2 class="login-title">员工管理系统</h2>
@@ -89,6 +90,7 @@ export default {
   background-color: rgb(255, 255, 255, 0.8); /* 透明背景色 */
   padding: 30px;
   border-radius: 20px; /* 圆角 */
+  
 }
 
 /* 背景 */
@@ -97,6 +99,7 @@ export default {
   width: 100%;
   height: 100%;
   background: url("../../assets/login.png");
+  background-size:100% 100%
 }
 
 /* 标题 */
