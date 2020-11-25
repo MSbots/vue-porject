@@ -45,18 +45,23 @@
               </el-table-column>
             </el-table>
             <!-- 分页 -->
-            <el-pagination
+            
+              
+             
+          </el-main>
+        <el-pagination
               style="text-align: center; padding-top: 20px;"
               background
-              layout="prev, pager, next, jumper, total, sizes"
+              @size-change="handleSizeChange"
+              @current-change="findAll"      
+              :current-page="currentPage1"
+              :page-sizes="[1, 2, 3, 4,5]"
               :page-size="5"
-              :page-sizes="[5, 10, 20, 40]"
-              @current-change="findPage"
-              @size-change="findSize"
-              :total="50"
-              >
-             </el-pagination>
-          </el-main>
+              
+              layout="total, prev, pager, next"
+              :total="totalNum">
+              
+           </el-pagination>
         </el-container>
       </el-container>
       <!-- 添加员工按钮 -->
@@ -113,6 +118,11 @@ const axios = require('axios');
   export default{
     data() {
       return {
+       totalNum:123,
+         currentPage1: 1,
+        currentPage2: 2,
+        currentPage3: 3,
+        currentPage4: 4, 
         // 保存编辑框的数据
         newData:{
           id: "",
@@ -133,11 +143,11 @@ const axios = require('axios');
         tableData: [],
         search: '',
 
-        // 分页
-        total: 0,
-        page: 1,
-        num: 21,
-        currentPage: 1,
+        // // 分页
+        // total: 0,
+        // page: 1,
+        // num: 21,
+        // currentPage: 1,
 
         // 添加员工的表单数据
         form: {
@@ -163,7 +173,17 @@ const axios = require('axios');
         },
       };
     },
+   
+          mounted(){
+   localStorage.setItem("i",this.info) 
+         axios.get("http://localhost:8090/employee/Max")
+         .then(Response=>(this.totalNum=Response.data[0].max))
+         .catch(function(error){
+console.log(error);
+         });
+         },
     methods: {
+      
       // 重置窗口的数据
       resetForm(){
         
@@ -207,12 +227,47 @@ const axios = require('axios');
       },
 
       // 处理分页
-      findPage(page){
-        console.log(page);
+      // findPage(page){
+      //   console.log(page);
+      // },
+      // findSize(size){
+      //   console.log(size);
+      // },
+      max(){
+        var _this =this;
+         axios.get("http://localhost:8090/employee/MaxID").then(res=>{
+            _this.data=res.data.maxid;
+            return _this.data;
+          })
+
       },
-      findSize(size){
-        console.log(size);
-      },
+      handleSizeChange(val) {
+                 this.pageNum=val;
+                //  this.getPackData();//根据用户获取的每页显示页面数量显示页面
+                //  this.totalPageNum();
+            },
+      findAll(newPage){
+          //列表展示
+          
+          
+          this.currentPage = newPage;
+          var _this =this;
+          axios.get("http://localhost:8090/employee/emplist?start="+this.currentPage).then(res=>{
+            _this.tableData=res.data;
+            console.log(_this.tableData);
+          })
+            },
+      // findAll(newPage){
+      //     //列表展示
+          
+          
+      //     this.currentPage = newPage;
+      //     var _this =this;
+      //     axios.get("http://localhost:8090/employee/findAll").then(res=>{
+      //       _this.tableData=res.data;
+      //       console.log(_this.tableData);
+      //     })
+      //       },
 
       //  安全退出，删除浏览器存储的User信息
       loginout(){
@@ -269,7 +324,7 @@ const axios = require('axios');
               message: '删除成功！',
               type: 'success'
             });
-            this.findAll();
+            this.findAll(1);
           })     
         }).catch(() => {
           this.$message({
@@ -279,13 +334,13 @@ const axios = require('axios');
         }); 
       },
       //刷新展示数据列表
-     findAll(){
-       var _this =this;
-       this.$axios.get(this.GLOBAL.BASE_URL+"employee/findAll").then(res=>{
-         _this.tableData=res.data;
-         console.log(_this.tableData);
-       })
-     }
+    //  findAll(){
+    //    var _this =this;
+    //    this.$axios.get(this.GLOBAL.BASE_URL+"employee/findAll").then(res=>{
+    //      _this.tableData=res.data;
+    //      console.log(_this.tableData);
+    //    })
+    //  }
      
 
       // 实现分页
@@ -322,7 +377,7 @@ const axios = require('axios');
           location.href="/login/index"
       } 
       //列表展示
-      this.findAll();
+      this.findAll(1);
     },
   }
   
