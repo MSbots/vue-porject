@@ -51,7 +51,10 @@ export default {
     let validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"))
-      } else {
+      } else if(value.length > 30){
+        callback(new Error("密码请勿超过30个字符！"))
+      }   
+      else {
         if (this.ruleForm2.checkPass !== "") {
           this.$refs.ruleForm2.validateField("checkPass");
         }
@@ -71,6 +74,8 @@ export default {
     let validateRealname = (rule,value,callback) =>{
        if(value === ""){
          callback(new Error("真实姓名不能为空"))
+       }else if(value.length > 20){
+         callback(new Error("姓名请勿超过20个字！"))
        }else{
          callback();
        }
@@ -78,6 +83,8 @@ export default {
     let validateUsename = (rule,value,callback) =>{
        if(value === ""){
          callback(new Error("用户名不能为空"))
+       }else if(value.length > 30){
+         callback(new Error("姓名请勿超过30个字符！"))
        }else{
          callback();
        }
@@ -131,8 +138,9 @@ export default {
           alert("真实姓名不能为空")
         }else if(this.ruleForm2.password!==this.ruleForm2.checkPass&&this.rules2.userName){
           alert("密码不一致")
-        }
-        else{
+        }else if(this.ruleForm2.userName.length>30||this.ruleForm2.realName.length>20||this.ruleForm2.password.length>30){
+          alert("输入信息有误，请根据提示修改数据！")
+        }else{
           axios.post("http://localhost:8090/user/register?code="+this.smscode,this.ruleForm2).then(res=>{
           console.log(res.data);         
 					if(res.data.state){
