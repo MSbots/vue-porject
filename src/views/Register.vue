@@ -51,10 +51,7 @@ export default {
     let validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"))
-      } else if(value.length > 30){
-        callback(new Error("密码请勿超过30个字符！"))
-      }   
-      else {
+      } else {
         if (this.ruleForm2.checkPass !== "") {
           this.$refs.ruleForm2.validateField("checkPass");
         }
@@ -74,8 +71,6 @@ export default {
     let validateRealname = (rule,value,callback) =>{
        if(value === ""){
          callback(new Error("真实姓名不能为空"))
-       }else if(value.length > 20){
-         callback(new Error("姓名请勿超过20个字！"))
        }else{
          callback();
        }
@@ -83,12 +78,11 @@ export default {
     let validateUsename = (rule,value,callback) =>{
        if(value === ""){
          callback(new Error("用户名不能为空"))
-       }else if(value.length > 30){
-         callback(new Error("姓名请勿超过30个字符！"))
        }else{
          callback();
        }
     };
+
     return { 
         url: "",
         smscode: "",
@@ -126,6 +120,7 @@ export default {
 				var  _this = this;
 				axios.get("http://localhost:8090/user/getImage?time="+Math.random()).then(res=>{
 					_this.url = res.data;
+
 				});
 			},
       //用来注册用户信息
@@ -136,15 +131,9 @@ export default {
           alert("真实姓名不能为空")
         }else if(this.ruleForm2.password!==this.ruleForm2.checkPass&&this.rules2.userName){
           alert("密码不一致")
-        }else if(this.ruleForm2.userName.length>30||this.ruleForm2.realName.length>20||this.ruleForm2.password.length>30){
-          alert("输入信息有误，请根据提示修改数据！")
-        }else{
-          this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,
-          {userName:this.ruleForm2.userName,
-          realName: this.ruleForm2.realName,
-           password: this.$md5(this.ruleForm2.password),
-           sex: this.ruleForm2.sex
-           }).then(res=>{
+        }
+        else{
+          axios.post("http://localhost:8090/user/register?code="+this.smscode,this.ruleForm2).then(res=>{
           console.log(res.data);         
 					if(res.data.state){
 						alert(res.data.msg+",点击确定跳转至登录页面!");
@@ -160,6 +149,7 @@ export default {
 			this.getSrc();
 		}
   }
+
 </script>
 
 <style scoped>

@@ -45,7 +45,7 @@ export default {
       // <!--进入系统-->
        onSubmit(){
                 //发送登录请求
-                axios.put("http://localhost:8090/user/login",{userName:this.form.userName, password: this.$md5(this.form.password)}).then(res=>{
+                axios.put("http://localhost:8090/user/login",this.form).then(res=>{
                     console.log(res.data);
                     if(res.data.state){
                         alert(res.data.msg+"点击确定进入主页!");
