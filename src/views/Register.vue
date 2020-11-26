@@ -50,13 +50,16 @@ export default {
     // <!--验证密码-->
     let validatePass = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请输入密码"))
+        callback(new Error("请输入密码")),
+      localStorage.setItem('j','1');
       } else if(value.length > 30){
-        callback(new Error("密码请勿超过30个字符！"))
+        callback(new Error("密码请勿超过30个字符！")),
+      localStorage.setItem('j','0');
       }   
       else {
         if (this.ruleForm2.checkPass !== "") {
-          this.$refs.ruleForm2.validateField("checkPass");
+          this.$refs.ruleForm2.validateField("checkPass"),
+      localStorage.setItem('j','0');
         }
         callback()
       }
@@ -64,31 +67,43 @@ export default {
     // <!--二次验证密码-->
     let validatePass2 = (rule, value, callback) => {
       if (value === "") {
-        callback(new Error("请再次输入密码"));
+        callback(new Error("请再次输入密码")),
+      localStorage.setItem('i','1');
       }else if(value !== this.ruleForm2.password) {
-        callback(new Error("两次输入密码不一致!"));
+        callback(new Error("两次输入密码不一致!")),
+      localStorage.setItem('i','1');
       }else{
-        callback();
+        callback(),
+      localStorage.setItem('i','0');
       }
-    };
-    let validateRealname = (rule,value,callback) =>{
-       if(value === ""){
-         callback(new Error("真实姓名不能为空"))
-       }else if(value.length > 20){
-         callback(new Error("姓名请勿超过20个字！"))
-       }else{
-         callback();
-       }
     };
     let validateUsename = (rule,value,callback) =>{
        if(value === ""){
-         callback(new Error("用户名不能为空"))
+         callback(new Error("用户名不能为空")),
+      localStorage.setItem('g','1');
        }else if(value.length > 30){
-         callback(new Error("姓名请勿超过30个字符！"))
+         callback(new Error("姓名请勿超过30个字符！")),
+      localStorage.setItem('g','1');
        }else{
-         callback();
+         callback(),
+      localStorage.setItem('g','0');
        }
     };
+    let validateContacts = (rule, value, callback) => {
+    if (!value) {
+      return callback(new Error('请输入中文')),
+      localStorage.setItem('f','1')
+    }
+    if (!/^[\u0391-\uFFE5]{1,30}$/.test(value)) {
+      callback(new Error('请输入中文')),
+      localStorage.setItem('f','1');
+    } else {
+      callback(),
+      localStorage.setItem('f','0');
+      
+    }
+    }
+    
     return { 
         url: "",
         smscode: "",
@@ -104,7 +119,7 @@ export default {
         password: [{ validator: validatePass, trigger: 'change' }],
         checkPass: [{validator:validatePass2, trigger: 'blur' }],
         userName: [{ validator: validateUsename, trigger: 'change' }],      
-        realName: [{ validator: validateRealname, trigger: 'change' }],
+        realName: [{validator: validateContacts,trigger: 'blur'}],
       },
     
     }
@@ -130,15 +145,19 @@ export default {
 			},
       //用来注册用户信息
 			register(){
+         var f=localStorage.getItem("f");
+        var g=localStorage.getItem("g");
+        var i=localStorage.getItem("i");
+        var j=localStorage.getItem("j");
         if(this.ruleForm2.userName==""){
           alert("用户名不能为空")
         }else if(this.ruleForm2.realName==""){
           alert("真实姓名不能为空")
         }else if(this.ruleForm2.password!==this.ruleForm2.checkPass&&this.rules2.userName){
           alert("密码不一致")
-        }else if(this.ruleForm2.userName.length>30||this.ruleForm2.realName.length>20||this.ruleForm2.password.length>30){
+        }else if(this.ruleForm2.userName.length>30||this.ruleForm2.realName.length>30||this.ruleForm2.password.length>30){
           alert("输入信息有误，请根据提示修改数据！")
-        }else{
+        }else if(f == 0 && g == 0 && i == 0 && j == 0){
           this.$axios.post(this.GLOBAL.BASE_URL+"user/register?code="+this.smscode,
           {userName:this.ruleForm2.userName,
           realName: this.ruleForm2.realName,

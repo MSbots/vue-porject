@@ -119,9 +119,9 @@ const axios = require('axios');
       return {
        totalNum:123,
          currentPage1: 1,
-        currentPage2: 2,
-        currentPage3: 3,
-        currentPage4: 4, 
+        // currentPage2: 2,
+        // currentPage3: 3,
+        // currentPage4: 4, 
         // 保存编辑框的数据
         newData:{
           id: "",
@@ -141,12 +141,6 @@ const axios = require('axios');
         // 保存员工信息的数组
         tableData: [],
         search: '',
-
-        // // 分页
-        // total: 0,
-        // page: 1,
-        // num: 21,
-        // currentPage: 1,
 
         // 添加员工的表单数据
         form: {
@@ -225,24 +219,6 @@ console.log(error);
         }
       },
 
-      // 处理分页
-      // findPage(page){
-      //   console.log(page);
-      // },
-      // findSize(size){
-      //   console.log(size);
-      // },
-      // max(){
-      //   var _this =this;
-      //    axios.get("http://localhost:8090/employee/MaxID").then(res=>{
-      //       _this=res.data;
-      //       console.log(2);
-      //      console.log(_this);
-      //       return _this;
-
-      //     })
-
-      // },
       handleSizeChange(val) {
                  this.pageNum=val;
                 //  this.getPackData();//根据用户获取的每页显示页面数量显示页面
@@ -259,17 +235,6 @@ console.log(error);
             console.log(_this.tableData);
           })
             },
-      // findAll(newPage){
-      //     //列表展示
-          
-          
-      //     this.currentPage = newPage;
-      //     var _this =this;
-      //     axios.get("http://localhost:8090/employee/findAll").then(res=>{
-      //       _this.tableData=res.data;
-      //       console.log(_this.tableData);
-      //     })
-      //       },
 
       //  安全退出，删除浏览器存储的User信息
       loginout(){
@@ -295,7 +260,14 @@ console.log(error);
         var c=localStorage.getItem("c");
         var d=localStorage.getItem("d");
         var e=localStorage.getItem("e");
-        if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
+        
+        if(this.form.name==""){
+              alert("姓名不能为空")
+          }else if(this.form.salary==0){
+              alert("工资不能为空")
+          }else if(this.form.age==0){
+              alert("年龄不能为空")
+          }else if(a == 0 && b == 0 && c == 0 && e == 0 && d == 0){
           axios({
             method:"post",
             url:"http://localhost:8090/employee/insert",
@@ -326,7 +298,7 @@ console.log(error);
               message: '删除成功！',
               type: 'success'
             });
-            this.findAll(1);
+            this.findAll(this.currentPage1);
              location.reload(true);
           })     
         }).catch(() => {
@@ -337,37 +309,6 @@ console.log(error);
         }); 
        
       },
-      //刷新展示数据列表
-    //  findAll(){
-    //    var _this =this;
-    //    this.$axios.get(this.GLOBAL.BASE_URL+"employee/findAll").then(res=>{
-    //      _this.tableData=res.data;
-    //      console.log(_this.tableData);
-    //    })
-    //  }
-     
-
-      // 实现分页
-    //   require(){
-    //     // post请求
-    //     this.axios.post("url", qs.stringify({
-    //       page: this.currentPage,
-    //       num: this.num
-    //     })).then((res)=>{
-    //       console.log(res.data)
-    //       this.lists = res.data.data;
-    //       this.total = res.data.num;
-    //     })
-    //   },
-    //   handleCurrentChange(currentPage){
-    //     this.currentPage = currentPage;
-    //     console.log(this.currentPage);
-    //     this.require();
-    //   },
-    //   handleSizeChange(size){
-    //     this.num = size;
-    //     console.log(this.num);
-    //   }
     },
     // 生命周期函数
     created() {
@@ -381,7 +322,7 @@ console.log(error);
           location.href="/login/index"
       } 
       //列表展示
-      this.findAll(1);
+      this.findAll(this.currentPage1);
     },
   }
   
