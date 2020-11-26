@@ -54,7 +54,7 @@
               background
               @size-change="handleSizeChange"
               @current-change="findAll"      
-              :current-page="currentPage1"
+              :current-page.sync="currentPage1"
               :page-sizes="[1, 2, 3, 4,5]"
               :page-size="5"
               layout="total, prev, pager, next, jumper"
@@ -119,9 +119,6 @@ const axios = require('axios');
       return {
        totalNum:123,
          currentPage1: 1,
-        // currentPage2: 2,
-        // currentPage3: 3,
-        // currentPage4: 4, 
         // 保存编辑框的数据
         newData:{
           id: "",
@@ -212,7 +209,7 @@ console.log(error);
               console.log(res.data)
             })
             this.editFlag = !this.editFlag;
-            location.reload(true);
+            this.findAll(this.currentPage1);
           }
         }else{
           alert("修改失败！请输入正确格式！")
@@ -226,9 +223,7 @@ console.log(error);
             },
       findAll(newPage){
           //列表展示
-          
-          
-          this.currentPage = newPage;
+         this.currentPage = newPage;
           var _this =this;
           axios.get("http://localhost:8090/employee/emplist?start="+this.currentPage).then(res=>{
             _this.tableData=res.data;
@@ -297,9 +292,18 @@ console.log(error);
             this.$message({
               message: '删除成功！',
               type: 'success'
-            });
-            this.findAll(this.currentPage1);
-             location.reload(true);
+            });            
+            if(this.tableData.length>1){
+              // window.sessionStorage.setItem("nowPage",this.currentPage1);
+              //  location.reload(true);
+              this.findAll(this.currentPage1);
+            }else{
+              this.currentPage1--;
+              window.sessionStorage.setItem("nowPage",this.currentPage1);
+              location.reload(true);
+            }
+           
+
           })     
         }).catch(() => {
           this.$message({
@@ -321,8 +325,14 @@ console.log(error);
           // alert("还未登录，请点击登录")
           location.href="/login/index"
       } 
-      //列表展示
-      this.findAll(this.currentPage1);
+      if(window.sessionStorage.getItem("nowPage")!=null){
+         this.currentPage1 = window.sessionStorage.getItem("nowPage");
+        //列表展示
+         this.findAll(this.currentPage1);
+      }else{
+        this.findAll(1);
+      }
+
     },
   }
   
