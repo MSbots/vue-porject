@@ -57,8 +57,7 @@
               :current-page="currentPage1"
               :page-sizes="[1, 2, 3, 4,5]"
               :page-size="5"
-              
-              layout="total, prev, pager, next"
+              layout="total, prev, pager, next, jumper"
               :total="totalNum">
               
            </el-pagination>
@@ -233,14 +232,17 @@ console.log(error);
       // findSize(size){
       //   console.log(size);
       // },
-      max(){
-        var _this =this;
-         axios.get("http://localhost:8090/employee/MaxID").then(res=>{
-            _this.data=res.data.maxid;
-            return _this.data;
-          })
+      // max(){
+      //   var _this =this;
+      //    axios.get("http://localhost:8090/employee/MaxID").then(res=>{
+      //       _this=res.data;
+      //       console.log(2);
+      //      console.log(_this);
+      //       return _this;
 
-      },
+      //     })
+
+      // },
       handleSizeChange(val) {
                  this.pageNum=val;
                 //  this.getPackData();//根据用户获取的每页显示页面数量显示页面
@@ -325,6 +327,7 @@ console.log(error);
               type: 'success'
             });
             this.findAll(1);
+             location.reload(true);
           })     
         }).catch(() => {
           this.$message({
@@ -332,6 +335,7 @@ console.log(error);
             message: '已取消！'
           });
         }); 
+       
       },
       //刷新展示数据列表
     //  findAll(){
